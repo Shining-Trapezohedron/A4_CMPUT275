@@ -37,7 +37,7 @@ class service_air(AirUnit):
         self.type = "Air Service"
         self.speed = 8
         self.max_atk_range = 1
-        self.damage = -3
+        self.damage = 3
         self.defense = 0
         self.bonus_damage = 0
         self.max_fuel = 20
@@ -52,18 +52,13 @@ class service_air(AirUnit):
         This overrides the super class function to allow
         special damage effects.
         """
-        # Do bonus damage to other air units
-        if isinstance(target, unit.air_unit.AirUnit):
-            # Calculate the total damage
-            damage = self.damage
-            # Get the unit's current defense
-            defense = target.get_defense(tile = target_tile)
-            
-            if (damage - defense > 0):
-                return 0
-            
-            return damage
-        else: return super().get_damage(target, target_tile)
+        # Do bonus damage to other air unit
+        if target.health < target.max_health:
+            if (target.health + self.damage)>= target.max_health:
+                target.health = target.max_health
+            else:
+                target.health = target.health + self.damage
+        return 0
 
 
     def is_attackable(self, from_tile, from_pos, to_tile, to_pos):
